@@ -5,19 +5,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 import matplotlib.dates as mdates
 
 
-def mostrar_pagina_lstm():
+def mostrar_pagina_random_forest():
     # Título de la aplicación
-    st.title("Modelo LSTM para Predicción de Precios de Acciones")
+    st.title("Modelo de Random Forest para Predicción de Precios de Acciones")
 
     # Descripción de la aplicación
     st.write("""
-    Esta aplicación permite realizar un análisis de predicción de precios de acciones utilizando un modelo de LSTM.
+    Esta aplicación permite realizar un análisis de predicción de precios de acciones utilizando un modelo Random Forest Regressor.
     Puedes seleccionar el ticker de la acción y el rango de fechas, y ver cómo el modelo predice los precios futuros en comparación con los reales.
     """)
 
@@ -33,6 +32,11 @@ def mostrar_pagina_lstm():
     start_date = st.date_input("Fecha de inicio", pd.to_datetime("2019-01-01"))
     end_date = st.date_input("Fecha de fin", pd.to_datetime("2023-12-31"))
 
+    # Explicación sobre el rango de fechas
+    st.write("""
+    **Rango de fechas:** Selecciona el rango de fechas para el cual deseas realizar el análisis.
+    """)
+
     # Descargar los datos de Yahoo Finance
     st.write("### Descargando datos...")
     data = yf.download(ticker, start=start_date, end=end_date)
@@ -40,6 +44,12 @@ def mostrar_pagina_lstm():
     # Mostrar los datos descargados
     st.write("### Datos descargados:")
     st.write(data.head())
+
+    # Explicación de los datos descargados
+    st.write("""
+    Los datos descargados muestran información financiera sobre el instrumento seleccionado.
+    Incluyen el precio de apertura (Open), el precio más alto del día (High), el precio más bajo del día (Low), el precio de cierre (Close), el volumen de transacciones (Volume), y el precio ajustado de cierre (Adj Close).
+    """)
 
     # Graficar los precios reales
     st.write("### Gráfico de los precios reales")
@@ -51,41 +61,35 @@ def mostrar_pagina_lstm():
     ax.legend()
     st.pyplot(fig)
 
-    # Preparar los datos para el modelo LSTM
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    data_scaled = scaler.fit_transform(data[['Close']].values)
+    # Preparar los datos para el modelo Random Forest
+    features = data[['Open', 'High', 'Low', 'Close']].values
+    target = features[:, 3].reshape(-1, 1)
 
-    X, y = [], []
-    for i in range(60, len(data_scaled)):
-        X.append(data_scaled[i-60:i, 0])
-        y.append(data_scaled[i, 0])
+    # Normalización de las características
+    scaler_features = MinMaxScaler(feature_range=(0, 1))
+    scaler_target = MinMaxScaler(feature_range=(0, 1))
 
-    X, y = np.array(X), np.array(y)
-    X = np.reshape(X, (X.shape[0], X.shape[1], 1))
+    features_scaled = scaler_features.fit_transform(features)
+    target_scaled = scaler_target.fit_transform(target)
+
+    # Separar los datos en características y objetivo
+    X = features_scaled[:-1]
+    y = target_scaled[1:]
 
     # Dividir los datos en entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, shuffle=False)
 
-    # Crear el modelo LSTM
-    model = Sequential()
-    model.add(LSTM(units=50, return_sequences=True,
-              input_shape=(X_train.shape[1], 1)))
-    model.add(Dropout(0.2))
-    model.add(LSTM(units=50))
-    model.add(Dropout(0.2))
-    model.add(Dense(1))
-    model.compile(optimizer='adam', loss='mean_squared_error')
-
-    # Entrenar el modelo
-    st.write("### Entrenando el modelo LSTM...")
-    model.fit(X_train, y_train, epochs=50, batch_size=32,
-              validation_split=0.2, verbose=0)
+    # Crear el modelo Random Forest y entrenarlo
+    rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+    rf_model.fit(X_train, y_train.ravel())
 
     # Hacer predicciones
-    predictions = model.predict(X_test)
-    predictions = scaler.inverse_transform(predictions)
-    y_test = scaler.inverse_transform(y_test.reshape(-1, 1))
+    predictions = rf_model.predict(X_test)
+
+    # Desnormalizar las predicciones y valores reales
+    predictions = scaler_target.inverse_transform(predictions.reshape(-1, 1))
+    y_test = scaler_target.inverse_transform(y_test)
 
     # Graficar las predicciones vs los valores reales
     st.write("### Comparación entre Predicciones y Valores Reales")
@@ -103,27 +107,31 @@ def mostrar_pagina_lstm():
     st.pyplot(fig)
 
     # Evaluación del modelo
-    mape_lstm = mean_absolute_percentage_error(y_test, predictions)
-    rmse_lstm = np.sqrt(mean_squared_error(y_test, predictions))
+    mape_rf = mean_absolute_percentage_error(y_test, predictions)
+    rmse_rf = np.sqrt(mean_squared_error(y_test, predictions))
 
-    st.write(f"**MAPE del modelo LSTM:** {mape_lstm:.4f}")
-    st.write(f"**RMSE del modelo LSTM:** {rmse_lstm:.4f}")
+    st.write(f"**MAPE del modelo Random Forest:** {mape_rf:.4f}")
+    st.write(f"**RMSE del modelo Random Forest:** {rmse_rf:.4f}")
 
     # Sección para hacer predicciones con datos ingresados
     st.write("### Realizar una Predicción con Nuevos Datos")
-    user_input = st.text_input("Ingrese los últimos 60 precios de cierre separados por coma", ",".join(
-        map(str, data['Close'][-60:].values)))
+    user_input = st.text_input(
+        "Ingrese un conjunto de datos (Open, High, Low, Close) separados por coma", "10.0, 11.0, 9.0, 10.5")
 
     if user_input:
-        # Convertir el input a un arreglo
+        # Convertir el input a un arreglo de características
         input_data = np.array([float(x)
-                              for x in user_input.split(',')]).reshape(-1, 1)
-        input_scaled = scaler.transform(input_data)
-        input_scaled = np.reshape(input_scaled, (1, input_scaled.shape[0], 1))
+                              for x in user_input.split(',')]).reshape(1, -1)
+
+        # Normalizar los datos de entrada
+        input_scaled = scaler_features.transform(input_data)
 
         # Realizar la predicción
-        prediction_scaled = model.predict(input_scaled)
-        prediction = scaler.inverse_transform(prediction_scaled)
+        prediction_scaled = rf_model.predict(input_scaled)
+
+        # Desnormalizar la predicción
+        prediction = scaler_target.inverse_transform(
+            prediction_scaled.reshape(-1, 1))
 
         st.write(
             f"La predicción para el precio de cierre del siguiente día es: {prediction[0][0]}")
@@ -131,4 +139,4 @@ def mostrar_pagina_lstm():
 
 # Llamar a la función de Streamlit para mostrar la página
 if __name__ == "__main__":
-    mostrar_pagina_lstm()
+    mostrar_pagina_random_forest()

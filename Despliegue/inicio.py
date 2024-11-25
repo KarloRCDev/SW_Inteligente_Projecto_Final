@@ -8,12 +8,11 @@ st.set_page_config(
 
 # Importar funciones de las páginas
 try:
-    from ensamblado import mostrar_pagina_ensamblado
-    from lstm import mostrar_pagina_lstm
-    from svm import mostrar_pagina_svm
-    from rbf import mostrar_pagina_rbf
-    from svc import mostrar_pagina_svc
-    from rfr_de_regresion import mostrar_pagina_random_forest
+    from combinado_SVR_LSTM import mostrar_pagina_svr_lstm
+    from LSTM import mostrar_pagina_lstm
+    from SVR import mostrar_pagina_svr
+    from RBF import mostrar_pagina_rbf
+    from RFR import mostrar_pagina_random_forest
 except ImportError as e:
     st.error(f"Error al importar módulos: {e}")
 
@@ -59,8 +58,8 @@ pages = {
     # "MODELO SVC": mostrar_pagina_svc,
     "MODELO RFR": mostrar_pagina_random_forest,
     "MODELO LSTM": mostrar_pagina_lstm,
-    "MODELO SVR": mostrar_pagina_svm,
-    "MODELO ENSAMBLADO": mostrar_pagina_ensamblado,
+    "MODELO SVR": mostrar_pagina_svr,
+    "MODELO ENSAMBLADO": mostrar_pagina_svr_lstm,
 }
 
 # Controlador principal
