@@ -1,7 +1,7 @@
-from RFR import mostrar_pagina_random_forest
-from RBF import mostrar_pagina_rbf
-from SVR import mostrar_pagina_svr
-from LSTM import mostrar_pagina_lstm
+from rfr import mostrar_pagina_random_forest
+from rbf import mostrar_pagina_rbf
+from svr import mostrar_pagina_svr
+from lstm import mostrar_pagina_lstm
 from combinado_SVR_LSTM import mostrar_pagina_svr_lstm
 import streamlit as st
 
