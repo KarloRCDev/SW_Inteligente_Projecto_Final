@@ -1,8 +1,8 @@
-from rfr import mostrar_pagina_random_forest
-from rbf import mostrar_pagina_rbf
-from svr import mostrar_pagina_svr
-from lstm import mostrar_pagina_lstm
-from combinado_SVR_LSTM import mostrar_pagina_svr_lstm
+from Despliegue.pages.rfr import mostrar_pagina_random_forest
+from Despliegue.pages.rbf import mostrar_pagina_rbf
+from Despliegue.pages.svr import mostrar_pagina_svr
+from Despliegue.pages.lstm import mostrar_pagina_lstm
+from Despliegue.pages.combinado_SVR_LSTM import mostrar_pagina_svr_lstm
 import streamlit as st
 
 # Configuración inicial de la página
