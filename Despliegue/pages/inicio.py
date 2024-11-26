@@ -24,6 +24,7 @@ def mostrar_pagina_presentacion():
         st.subheader("UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS")
         st.subheader("Facultad de Ingeniería de Sistemas e Informática")
         st.write("\n")
+        st.write("          ")
         st.image(
             "https://seeklogo.com/images/U/universidad-nacional-mayor-de-san-marcos-logo-302291E186-seeklogo.com.png",
             width=100,
