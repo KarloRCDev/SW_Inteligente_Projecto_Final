@@ -55,7 +55,6 @@ def mostrar_pagina_presentacion():
 pages = {
     "INICIO": mostrar_pagina_presentacion,
     "MODELO RBF": mostrar_pagina_rbf,
-    # "MODELO SVC": mostrar_pagina_svc,
     "MODELO RFR": mostrar_pagina_random_forest,
     "MODELO LSTM": mostrar_pagina_lstm,
     "MODELO SVR": mostrar_pagina_svr,
