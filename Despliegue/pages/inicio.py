@@ -24,12 +24,10 @@ def mostrar_pagina_presentacion():
         st.subheader("UNIVERSIDAD NACIONAL MAYOR DE SAN MARCOS")
         st.subheader("Facultad de Ingeniería de Sistemas e Informática")
         st.write("\n")
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col2:
-            st.image(
-                "https://seeklogo.com/images/U/universidad-nacional-mayor-de-san-marcos-logo-302291E186-seeklogo.com.png",
-                width=100,
-            )
+        st.image(
+            "https://seeklogo.com/images/U/universidad-nacional-mayor-de-san-marcos-logo-302291E186-seeklogo.com.png",
+            width=100,
+        )
         st.header("Proyecto Final Integral del Curso")
         st.subheader("Curso: Software Inteligente - 2024-2")
         st.subheader("Profesor:")
