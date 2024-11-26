@@ -28,7 +28,7 @@ def mostrar_pagina_presentacion():
     col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
     with col3:
         st.image(
-            "https://seeklogo.com/images/U/universidad-nacional-mayor-de-san-marcos-logo-302291E186-seeklogo.com.png", width=200)
+            "https://seeklogo.com/images/U/universidad-nacional-mayor-de-san-marcos-logo-302291E186-seeklogo.com.png", width=100)
 
     col1, col2, col3 = st.columns([1, 3, 1])
     with col2:
