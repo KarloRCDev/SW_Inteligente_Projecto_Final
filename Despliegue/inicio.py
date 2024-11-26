@@ -1,3 +1,8 @@
+from RFR import mostrar_pagina_random_forest
+from RBF import mostrar_pagina_rbf
+from SVR import mostrar_pagina_svr
+from LSTM import mostrar_pagina_lstm
+from combinado_SVR_LSTM import mostrar_pagina_svr_lstm
 import streamlit as st
 
 # Configuración inicial de la página
@@ -6,15 +11,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# Importar funciones de las páginas
-try:
-    from combinado_SVR_LSTM import mostrar_pagina_svr_lstm
-    from LSTM import mostrar_pagina_lstm
-    from SVR import mostrar_pagina_svr
-    from RBF import mostrar_pagina_rbf
-    from RFR import mostrar_pagina_random_forest
-except ImportError as e:
-    st.error(f"Error al importar módulos: {e}")
 
 # Función para mostrar la página de inicio
 
